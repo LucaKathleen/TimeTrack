@@ -1,8 +1,9 @@
 (()=>{
-  const V='?v=4';
+  const BASE='https://raw.githubusercontent.com/LucaKathleen/TimeTrack/main/srs-v9/assets/';
+  const V='?v=7';
   const FRAMES={
-    hungry:['./assets/cat-hungry-1.png'+V,'./assets/cat-hungry-2.png'+V],
-    happy:['./assets/cat-happy-1.png'+V,'./assets/cat-happy-2.png'+V]
+    hungry:[BASE+'cat-hungry-1.png'+V,BASE+'cat-hungry-2.png'+V],
+    happy:[BASE+'cat-happy-1.png'+V,BASE+'cat-happy-2.png'+V]
   };
   let mood='hungry',frame=0,timer=null;
   function img(){return document.getElementById('catSprite')}
