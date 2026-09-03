@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Russian SRS v12</title>
+<style>
+:root{--bg:#090b1d;--p:#151936;--l:#45418a;--t:#f5f3ff;--m:#aaa8cf}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#211a50,#090b1d 60%);color:var(--t);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;min-height:100vh}
+.app{max-width:760px;margin:auto;padding:12px}.title{text-align:center;font-size:1.7rem;font-weight:900;margin:8px 0 14px;text-shadow:3px 3px #342b75}
+.panel{background:linear-gradient(#181c3d,#10132b);border:2px solid var(--l);border-radius:12px;box-shadow:5px 5px 0 #050611}
+.room{height:235px;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;background:linear-gradient(#292547 0 62%,#17152c 62%)}
+.room:after{content:"";position:absolute;left:0;right:0;bottom:0;height:38%;background:repeating-linear-gradient(90deg,#211b35 0 35px,#18142a 35px 39px);opacity:.7}
+.cat{z-index:2;width:min(82vw,390px);height:auto;image-rendering:pixelated;filter:drop-shadow(0 8px 4px #05061188);margin-bottom:8px}
+.speech{position:absolute;z-index:3;left:12px;top:12px;max-width:155px;padding:9px 10px;border:2px solid #6559a8;border-radius:9px;background:#0c1028e8;font-size:.72rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.stat{text-align:center;padding:10px}.stat b{display:block;font-size:1.2rem}
+.card{padding:18px;min-height:350px;display:flex;flex-direction:column;justify-content:center}.prompt,.ru{text-align:center;font-weight:900}.prompt{font-size:clamp(1.8rem,7vw,2.8rem);margin:20px 0}.ru{font-size:clamp(1.55rem,6vw,2.3rem)}
+.note{text-align:center;color:var(--m);margin-top:9px}.btn{font:inherit;color:#fff;font-weight:900;border:2px solid var(--l);border-radius:9px;padding:13px;background:#302b75;width:100%;margin-top:12px}
+.ratings{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.again{background:#b23d56}.hard{background:#946227}.good{background:#18745a}.easy{background:#1c7285}
+.top{display:flex;justify-content:space-between;align-items:center;color:var(--m)}.tts{width:auto;margin:0;padding:8px 12px}.done{text-align:center;color:var(--m);padding:45px 10px}
+@media(min-width:700px){.ratings{grid-template-columns:repeat(4,1fr)}}
+</style></head>
+<body><main class="app">
+<div class="title">✦ Russian SRS ✦</div>
+<div class="panel room"><img id="cat" class="cat" src="./assets/cat-hungry-1.png?v=12" alt="Pixel-Art Katze"><div class="speech" id="speech">Noch ein paar Karten… danach gibt’s Futter.</div></div>
+<div class="stats"><div class="panel stat">Offen<b id="open">0</b></div><div class="panel stat">Heute<b id="today">0</b></div><div class="panel stat">Katze<b id="mood">Hungrig</b></div></div>
+<section class="panel card"><div class="top"><span id="phase">Neu lernen</span><button id="tts" class="btn tts">♪</button></div><div id="study"></div></section>
+</main>
+<script>
+(()=>{"use strict";
+const $=s=>document.querySelector(s),K="russian-srs-progress-v1",M="russian-srs-meta-v1",L="russian-srs-local-cards-v1",MIN=60000,DAY=86400000;
+const base=[
+{id:"a",de:"Ich hab keinen Bock zu kochen.",ru:"Мне влом готовить.",note:"влом = salopp: kein Bock"},
+{id:"b",de:"Mir ist mulmig, da allein hinzugehen.",ru:"Мне стрёмно туда идти одной.",note:"стрёмно = mulmig / sketchy"},
+{id:"c",de:"Ich hab auf der Arbeit Mist gebaut.",ru:"Я накосячила на работе.",note:"накосячить = Mist bauen"},
+{id:"d",de:"Warum gehst du mir so auf den Sack?",ru:"Чё ты до меня докопался?",note:"докопаться = jemanden nerven"},
+{id:"e",de:"Ich hab beschlossen, mir die Mühe zu machen und alles selbst zu machen.",ru:"Я решила заморочиться и сама всё сделать.",note:"заморочиться = sich richtig Mühe machen"},
+{id:"f",de:"Ich kann darüber nicht mehr vor Lachen.",ru:"Я с этого угораю.",note:"угорать = sich kaputtlachen"},
+{id:"g",de:"Hör auf, dich rauszureden.",ru:"Хватит отмазываться.",note:"отмазываться = sich rausreden"},
+{id:"h",de:"Er ist mit seiner Lüge aufgeflogen.",ru:"Он спалился на лжи.",note:"спалиться = auffliegen"},
+{id:"i",de:"Was willst du mir da erzählen?",ru:"Что ты мне втираешь?",note:"втирать = jemandem Quatsch erzählen"},
+{id:"j",de:"Ich bin nach Hause gekommen und direkt weggepennt.",ru:"Я пришла домой и сразу вырубилась.",note:"вырубиться = wegpennen"}
+];
+const load=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))||f}catch{return f}};
+let p=load(K,{}),meta=load(M,{totalReviews:0,reviewsToday:0,reviewDay:""}),local=load(L,[]),cards=[...base,...local],cur=null,revealed=false,catFrame=0,catMood="hungry";
+const fresh=()=>({state:"learning",correctStreak:0,due:0,interval:0,ease:2.5,reviews:0,lapses:0});
+function pf(id){let x=p[id];if(!x)return fresh();if(x.state)return x;return{state:(x.reps||0)>0?"review":"learning",correctStreak:0,due:x.due||0,interval:Math.max(1,Math.round(x.interval||1)),ease:x.ease||2.5,reviews:x.reps||0,lapses:x.lapses||0}}
+function save(){localStorage.setItem(K,JSON.stringify(p));localStorage.setItem(M,JSON.stringify(meta));localStorage.setItem(L,JSON.stringify(local))}
+function endToday(){let d=new Date();d.setHours(23,59,59,999);return d.getTime()}
+function due(){return cards.filter(c=>pf(c.id).due<=Date.now()).sort((a,b)=>pf(a.id).due-pf(b.id).due)}
+function openToday(){return cards.filter(c=>pf(c.id).due<=endToday()).length}
+function setCat(m){catMood=m;catFrame=0;drawCat()}
+function drawCat(){const pre=catMood==="happy"?"happy":"hungry";$("#cat").src=`./assets/cat-${pre}-${catFrame+1}.png?v=12`}
+setInterval(()=>{catFrame=1-catFrame;drawCat()},700);
+function stats(){const o=openToday();$("#open").textContent=o;$("#today").textContent=meta.reviewsToday||0;if(o===0){setCat("happy");$("#mood").textContent="Zufrieden";$("#speech").textContent="Mrrr… satt. Morgen wieder."}else{setCat("hungry");$("#mood").textContent="Hungrig";$("#speech").textContent=`Noch ${o} Karten… danach gibt’s Futter.`}}
+function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function pick(){cur=due()[0]||null;revealed=false;render()}
+function render(){stats();if(!cur){$("#phase").textContent=openToday()?"Lernpause":"Fertig";$("#study").innerHTML='<div class="done"><h2>'+ (openToday()?"Kurz warten…":"Für heute fertig ✦") +'</h2></div>';return}
+const x=pf(cur.id);$("#phase").textContent=x.state==="review"?"↻ Wiederholung":x.state==="relearning"?"↻ Wieder lernen":"✦ Neu lernen";
+$("#study").innerHTML=`<div class="prompt">${esc(cur.de)}</div><div class="ru" style="display:${revealed?"block":"none"}">${esc(cur.ru)}</div>${revealed&&cur.note?`<div class="note">${esc(cur.note)}</div>`:""}${revealed?'<div class="ratings"><button class="btn again" data-r="again">Nochmal</button><button class="btn hard" data-r="hard">Schwer</button><button class="btn good" data-r="good">Gut</button><button class="btn easy" data-r="easy">Einfach</button></div>':'<button class="btn" id="show">Antwort zeigen</button>'}`;
+if($("#show"))$("#show").onclick=()=>{revealed=true;render()};document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>rate(b.dataset.r))}
+function rate(r){let x=pf(cur.id);if(x.state!=="review"){if(r==="again"){x.correctStreak=0;x.due=Date.now()+MIN}else if(r==="hard"){x.correctStreak=0;x.due=Date.now()+6*MIN}else{x.correctStreak=(x.correctStreak||0)+1;if(x.correctStreak>=2){x.state="review";x.interval=1;x.due=Date.now()+DAY;x.correctStreak=0}else x.due=Date.now()+10*MIN}}else{let i=Math.max(1,x.interval||1);if(r==="again"){x.state="relearning";x.correctStreak=0;x.lapses=(x.lapses||0)+1;x.ease=Math.max(1.3,(x.ease||2.5)-.2);x.due=Date.now()+MIN}else if(r==="hard"){x.interval=Math.max(1,Math.round(i*1.2));x.due=Date.now()+x.interval*DAY}else if(r==="good"){x.interval=Math.max(i+1,Math.round(i*(x.ease||2.5)));x.due=Date.now()+x.interval*DAY}else{x.interval=Math.max(i+2,Math.round(i*(x.ease||2.5)*1.3));x.due=Date.now()+x.interval*DAY}}
+p[cur.id]=x;const d=new Date().toISOString().slice(0,10);if(meta.reviewDay!==d){meta.reviewDay=d;meta.reviewsToday=0}meta.reviewsToday=(meta.reviewsToday||0)+1;meta.totalReviews=(meta.totalReviews||0)+1;save();pick()}
+$("#tts").onclick=()=>{if(!cur||!("speechSynthesis" in window))return;const u=new SpeechSynthesisUtterance(cur.ru);u.lang="ru-RU";u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u)};
+pick();setInterval(()=>{if(!cur&&due().length)pick();else stats()},15000);
+})();
+</script></body></html>
