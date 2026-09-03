@@ -16,5 +16,6 @@
 .today-hero.complete .today-caption{font-weight:700;color:var(--text)}
 .today-hero + .stats .card:last-child{display:none}
 .today-hero + .stats{grid-template-columns:repeat(2,1fr)}
+.heatmap{transform:scaleX(-1)}
 @media(max-width:600px){.today-hero{padding:18px}.goal-ring{width:84px;height:84px;flex-basis:84px}.goal-bottom{grid-template-columns:1fr}.goal-edit{justify-content:flex-start}.today-hero + .stats{grid-template-columns:1fr 1fr}}
 @media(max-width:390px){.today-main{font-size:2.55rem}.goal-ring{width:76px;height:76px;flex-basis:76px}.goal-ring-inner strong{font-size:.95rem}}
