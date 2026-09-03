@@ -1,7 +1,8 @@
 (()=>{
+  const V='?v=4';
   const FRAMES={
-    hungry:['./assets/cat-hungry-1.png','./assets/cat-hungry-2.png'],
-    happy:['./assets/cat-happy-1.png','./assets/cat-happy-2.png']
+    hungry:['./assets/cat-hungry-1.png'+V,'./assets/cat-hungry-2.png'+V],
+    happy:['./assets/cat-happy-1.png'+V,'./assets/cat-happy-2.png'+V]
   };
   let mood='hungry',frame=0,timer=null;
   function img(){return document.getElementById('catSprite')}
