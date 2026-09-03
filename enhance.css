@@ -1,0 +1,20 @@
+:root{--goal-accent:#7c3aed;--goal-accent-soft:rgba(124,58,237,.12)}
+.today-hero{position:relative;overflow:hidden;margin-bottom:14px;padding:20px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(145deg,var(--card),var(--soft));box-shadow:var(--shadow)}
+.today-hero:after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-70px;top:-90px;background:var(--goal-accent-soft);pointer-events:none}
+.today-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;position:relative;z-index:1}
+.today-kicker{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.today-main{font-size:clamp(2.3rem,10vw,4.6rem);line-height:.95;font-weight:880;letter-spacing:-.055em;margin-top:8px}
+.today-caption{margin-top:8px;color:var(--muted);font-size:.92rem}
+.goal-ring{--p:0;flex:0 0 96px;width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--goal-accent) calc(var(--p)*1%),var(--soft) 0);position:relative}
+.goal-ring:before{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--card)}
+.goal-ring-inner{position:relative;z-index:1;text-align:center;font-size:.76rem;color:var(--muted);line-height:1.15}
+.goal-ring-inner strong{display:block;color:var(--text);font-size:1.05rem;margin-bottom:2px}
+.goal-bottom{position:relative;z-index:1;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;margin-top:18px}
+.goal-copy{min-width:0}.goal-progress-track{height:11px;border-radius:999px;background:var(--soft);overflow:hidden;margin-top:7px}.goal-progress-fill{height:100%;width:0;border-radius:inherit;background:var(--goal-accent);transition:width .35s ease}
+.goal-edit{display:flex;gap:7px;align-items:center}.goal-edit input{width:76px;min-height:38px;margin:0;padding:7px 9px}.goal-edit .btn{min-height:38px;padding:7px 10px}
+.today-hero.complete{box-shadow:0 10px 32px rgba(124,58,237,.13)}
+.today-hero.complete .today-caption{font-weight:700;color:var(--text)}
+.today-hero + .stats .card:last-child{display:none}
+.today-hero + .stats{grid-template-columns:repeat(2,1fr)}
+@media(max-width:600px){.today-hero{padding:18px}.goal-ring{width:84px;height:84px;flex-basis:84px}.goal-bottom{grid-template-columns:1fr}.goal-edit{justify-content:flex-start}.today-hero + .stats{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){.today-main{font-size:2.55rem}.goal-ring{width:76px;height:76px;flex-basis:76px}.goal-ring-inner strong{font-size:.95rem}}
