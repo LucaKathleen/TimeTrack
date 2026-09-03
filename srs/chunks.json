@@ -1,0 +1,72 @@
+[
+  {
+    "id": "vplom-gotovit",
+    "de": "Ich hab keinen Bock zu kochen.",
+    "ru": "Мне влом готовить.",
+    "note": "влом = salopp: zu lästig / kein Bock",
+    "tags": ["slang", "alltag"]
+  },
+  {
+    "id": "stremno-idti",
+    "de": "Mir ist etwas mulmig dabei, da allein hinzugehen.",
+    "ru": "Мне стрёмно туда идти одному.",
+    "note": "стрёмно = sketchy, unangenehm, mulmig",
+    "tags": ["slang", "alltag"]
+  },
+  {
+    "id": "nakosyachit-rabota",
+    "de": "Ich hab auf der Arbeit Mist gebaut.",
+    "ru": "Я накосячила на работе.",
+    "note": "накосячить = Mist bauen / verkacken",
+    "tags": ["slang"]
+  },
+  {
+    "id": "dokopalsya",
+    "de": "Warum gehst du mir so auf den Sack?",
+    "ru": "Чё ты до меня докопался?",
+    "note": "докопаться до кого-то = sich an jemandem festbeißen / nerven",
+    "tags": ["slang", "umgangssprache"]
+  },
+  {
+    "id": "zamorochitsya",
+    "de": "Ich hab beschlossen, mir die Mühe zu machen und alles selbst zu machen.",
+    "ru": "Я решила заморочиться и сама всё сделать.",
+    "note": "заморочиться = sich intensiv mit etwas beschäftigen / Mühe machen",
+    "tags": ["umgangssprache"]
+  },
+  {
+    "id": "ugorayu",
+    "de": "Ich kann darüber nicht mehr vor Lachen.",
+    "ru": "Я с этого угораю.",
+    "note": "угорать = sich kaputtlachen",
+    "tags": ["slang"]
+  },
+  {
+    "id": "otmazyvatsya",
+    "de": "Hör auf, dich rauszureden.",
+    "ru": "Хватит отмазываться.",
+    "note": "отмазываться = Ausreden erfinden / sich rausreden",
+    "tags": ["slang"]
+  },
+  {
+    "id": "spalitsya",
+    "de": "Er ist mit seiner Lüge aufgeflogen.",
+    "ru": "Он спалился на лжи.",
+    "note": "спалиться = auffliegen / sich verraten",
+    "tags": ["slang"]
+  },
+  {
+    "id": "vtirat",
+    "de": "Was willst du mir da erzählen?",
+    "ru": "Что ты мне втираешь?",
+    "note": "втирать = jemandem etwas weismachen / Quatsch erzählen",
+    "tags": ["slang"]
+  },
+  {
+    "id": "vyrubitsya",
+    "de": "Ich bin nach Hause gekommen und direkt weggepennt.",
+    "ru": "Я пришла домой и сразу вырубилась.",
+    "note": "вырубиться = wegpennen; je nach Kontext auch bewusstlos werden",
+    "tags": ["slang", "alltag"]
+  }
+]
