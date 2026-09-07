@@ -39,7 +39,7 @@
     .timer{font:760 2.3rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:-1px}
     .section-title{font-weight:780;margin:0 0 12px}.habit-grid{grid-template-columns:repeat(3,1fr)}
     .habit-card h3{margin:0;font-size:1.02rem}.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini strong{display:block;margin-top:2px}
-    .history-item{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}.history-item:last-child{border-bottom:0}
+    .history-item{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center}.history-item:last-child{border-bottom:0}.history-main{min-width:0;flex:1}.history-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}.history-delete{min-height:36px;padding:6px 10px}
     .muted{color:var(--muted)}.small{font-size:.86rem}.status{min-height:20px;margin-top:9px;color:var(--muted);font-size:.86rem}
     .toolbar{display:flex;gap:8px;flex-wrap:wrap}.file-btn{position:relative;overflow:hidden}.file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
     .tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--soft);padding:5px;border-radius:15px;margin:8px 0 16px}
@@ -282,7 +282,15 @@
     }));
 
     const recent=[...entries].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,20);
-    $('#history').innerHTML=recent.length?recent.map(e=>{const h=habits.find(x=>x.id===e.habitId),i=habits.findIndex(x=>x.id===e.habitId),color=h?habitColor(h,i):'#9ca3af';return `<div class="history-item"><span><span class="dot" style="display:inline-block;background:${color};margin-right:6px"></span><strong>${escapeHtml(h?h.name:'Gelöscht')}</strong> · ${e.date}</span><span>${formatDuration(e.seconds)}</span></div>`}).join(''):'<div class="muted">Noch keine Zeiten erfasst.</div>';
+    $('#history').innerHTML=recent.length?recent.map(e=>{const h=habits.find(x=>x.id===e.habitId),i=habits.findIndex(x=>x.id===e.habitId),color=h?habitColor(h,i):'#9ca3af';return `<div class="history-item"><div class="history-main"><span class="dot" style="display:inline-block;background:${color};margin-right:6px"></span><strong>${escapeHtml(h?h.name:'Gelöscht')}</strong> · ${e.date}</div><div class="history-actions"><span>${formatDuration(e.seconds)}</span><button class="btn danger small history-delete" data-id="${e.id}" type="button" aria-label="Eintrag löschen">Löschen</button></div></div>`}).join(''):'<div class="muted">Noch keine Zeiten erfasst.</div>';
+    document.querySelectorAll('.history-delete').forEach(btn=>btn.addEventListener('click',async()=>{
+      const id=btn.dataset.id,e=entries.find(x=>x.id===id);if(!e)return;
+      const h=habits.find(x=>x.id===e.habitId),label=h?h.name:'diesen Eintrag';
+      if(!confirm(`${label} vom ${e.date} (${formatDuration(e.seconds)}) wirklich löschen?`))return;
+      await txDelete('entries',id);
+      entries=entries.filter(x=>x.id!==id);
+      render();
+    }));
   }
 
   function dateSeries(days){
